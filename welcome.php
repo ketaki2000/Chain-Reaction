@@ -7,6 +7,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
     header("location: login.php");
     exit;
 }
+
 ?>
  
 <!DOCTYPE html>
@@ -27,5 +28,26 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
         <a href="reset-password.php" class="btn btn-warning">Reset Your Password</a>
         <a href="logout.php" class="btn btn-danger">Sign Out of Your Account</a>
     </p>
+    <div>
+        <button id='playgame'>Play A Game !</button>
+    </div>
+    <script>
+    document.getElementById('playgame').addEventListener("click", function(){
+    var conn = new WebSocket('ws://localhost:8080');
+    console.log(conn);
+    conn.onopen = function(e) {
+        console.log("Connection established!");
+       
+    };
+
+    conn.onmessage = function(e) {
+        console.log(e.data);
+    };
+    window.location.href = "game.php";
+    }
+    );
+    
+    
+    </script>
 </body>
 </html>
