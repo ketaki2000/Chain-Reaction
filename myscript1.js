@@ -1,22 +1,6 @@
 
 $(document).ready(function(){
 
-    var conn = new WebSocket('ws://localhost:8080');
-    conn.onopen = function(e) {
-        console.log("Connection established!");
-        
-    };
-
-    conn.onmessage = function(e)
-    {
-        
-        console.log(e.data);
-        var arr = e.data.split(',');
-        var [relativeX,relativeY,Rows,Columns] = arr;
-        console.log(relativeX,relativeY,Rows,Columns);
-        BoxDetect(relativeX,relativeY,Rows,Columns);
-        
-    }
     var canvas = $("#myCanvas")[0];
     var ctx = canvas.getContext("2d");
     var GridStartX = 10;
@@ -546,14 +530,8 @@ $(document).ready(function(){
     
     }
     
-    function opponentMove(c,r,status,player)
-    {
-       balls[c][r].Status=status;
-       balls[c][r].player_id=(player+1)%2;
-       currentPlayer=player;
-       console.log("this is executing but nothing is happening");
-
-    }
+    
+    
     
     var temp = $("#myCanvas");
     
@@ -565,8 +543,7 @@ $(document).ready(function(){
       var relativeY = event.pageY-offset.top;
       //console.log("x: "+relativeX+" ,y: "+relativeY);
       BoxDetect(relativeX,relativeY,Rows,Columns);
-      var data = [relativeX,relativeY,Rows,Columns];
-      conn.send(data);
+      
     });
     
     function mouseClickHandler(e)
@@ -590,3 +567,228 @@ $(document).ready(function(){
     }
     
     });
+    function getCriticalMass(i,j)
+    {
+        if((i==0 && j==0 )|| (i==0 && j==Columns-1) || (i==Rows-1 && j==0) || (i=Rows-1 && j==Columns-1))
+        {
+            return 2;
+        }
+        if(((i==0||i==Rows-1)&&(j>0&&j<Columns-1))||((j==0||j==Columns-1)&&(i>0&&i<Rows-1)))
+        {
+            return 3;
+        }
+        return 4;
+    }
+    function evaluation(position,player)
+    {
+        if(gameover(position) && player==0)
+        {
+            return -10000;
+        }
+        if(gameover(position) && player==1)
+        {
+            return +10000;
+        }
+        value = 0;
+        for (i=0;i<Rows;i++)
+        {
+            for(j=0;j<Columns;j++)
+            {
+                if(position.player_id==player)
+                {
+                    value+=1;
+                    if(checkEnemyCriticalCells(position,i,j))
+                    {
+                        value-=(5-getCriticalMass(i,j));
+                    }
+                    else
+                    {
+                        if(getCriticalMass(i,j)==2)
+                        {
+                            value+=3;
+                        }
+                        else if(getCriticalMass(i,j)==3)
+                        {
+                            value+=2;
+                        }
+                        if(position[i][j].Status == getCriticalMass(i,j))
+                        {
+                            value+=2;
+                        }
+                    }
+                    if(position[i][j].Status == getCriticalMass(i,j))
+                       {
+                            value+=2;
+                        } 
+                }
+            }
+        }
+    }
+    
+    function aibfs(position,i,j)
+    {
+        position[i][j].Status++;  
+        x = [0,0,1,-1]
+        y = [-1,1,0,0]
+        if((i==0 && j==0 )|| (i==0 && j==Columns-1) || (i==Rows-1 && j==0) || (i=Rows-1 && j==Columns-1))
+        {
+            if(position[i][j].Status>=2)
+            {
+                for(k=0;k<4;k++)
+                {
+                    if(func(i+x[k],j+y[k]))
+                    {
+                        position[i+x[k]][j+y[k]]++;
+                        position[i+x[k]][j+y[k]].player_id=position[i][j].player_id;
+                    }
+                }
+                for(k=0;k<4;k++)
+                {
+                    if(func(i+x[k],j+y[k]))
+                    {
+                        aibfs(position,i+x[k],j+y[k]);
+                    }
+                }
+            }
+            
+        }
+        else if(((i==0||i==Rows-1)&&(j>0&&j<Columns-1))||((j==0||j==Columns-1)&&(i>0&&i<Rows-1)))
+        {
+            if(position[i][j].Status>=3)
+            {
+                for(k=0;k<4;k++)
+                {
+                    if(func(i+x[k],j+y[k]))
+                    {
+                        position[i+x[k]][j+y[k]]++;
+                        position[i+x[k]][j+y[k]].player_id=position[i][j].player_id;
+                    }
+                }
+                for(k=0;k<4;k++)
+                {
+                    if(func(i+x[k],j+y[k]))
+                    {
+                        aibfs(position,i+x[k],j+y[k]);
+                    }
+                }
+            }
+        }
+        else if(position[i][j].Status>=4)
+        {
+            for(k=0;k<4;k++)
+            {
+                if(func(i+x[k],j+y[k]))
+                {
+                    position[i+x[k]][j+y[k]]++;
+                    position[i+x[k]][j+y[k]].player_id=position[i][j].player_id;
+                }
+            }
+            for(k=0;k<4;k++)
+            {
+                if(func(i+x[k],j+y[k]))
+                {
+                    aibfs(position,i+x[k],j+y[k]);
+                }
+            }
+        }
+        
+        
+    }
+    function moveGen(position,player)
+    {
+        var original = position;
+        var movegen = [];
+        for(i=0;i<Rows;i++)
+        {
+            for(j=0;j<Columns;j++)
+            {
+                if(position.player_id==player)
+                {
+                    var temp = original;
+                    
+                    movegen.push(aibfs(temp,i,j));
+                }
+            }
+        }
+        return movegen;
+    }
+    function gameover(position)
+    {
+        var p1=-1;
+        var p2=-1;
+        for(r = 0;r<Rows; ++r)
+        {
+            for(c = 0;c<Columns;++c)
+            {
+                if(position[c][r].Status>0)
+                {
+                    if(p1==-1)
+                    {
+                        p1=position[c][r].player_id;
+                    }
+                    else if(position[c][r].player_id != p1)
+                    {
+                        p2=position[c][r].player_id;
+                        break;
+    
+                    }
+                }
+    
+            }
+            if(p2!=-1)
+            {
+                break;
+            }
+        }
+        if(p2==-1)
+        {
+            p1++;
+            
+            //document.location.reload();
+            return p1;
+    
+        }
+        return 0;
+    }
+    function minimax(position,depth,alpha,beta,maximizingPlayer)
+    {
+        if(depth==0 || gameover(position))
+        {
+                return evaluation(position);
+        }
+
+        if (maximizingPlayer)
+        {
+            var maxEval = -Infinity;
+            var children  = moveGen(position);
+            for(child=0;child<children.length;child++)
+            {
+                eval = minimax(children[child],depth-1,alpha,beta,false);
+                maxEval = max(maxEval,eval);
+
+                alpha = max(alpha,eval);
+                if(beta<=alpha)
+                {
+                    break;
+                }
+                return maxEval;
+            }
+        }
+        else
+        {
+            var minEval = +Infinity;
+            var children  = moveGen(position);
+            for(child=0;child<children.length;child++)
+            {
+                eval = minimax(children[child],depth-1,alpha,beta,false);
+                minEval = min(minEval,eval);
+
+                beta = min(beta,eval);
+                if(beta<=alpha)
+                {
+                    break;
+                }
+                return minEval;
+            }
+        }
+    }

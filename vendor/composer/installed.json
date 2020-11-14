@@ -63,7 +63,7 @@
                 "issues": "https://github.com/ratchetphp/Ratchet/issues",
                 "source": "https://github.com/ratchetphp/Ratchet/tree/master"
             },
-            "install-path": "../cboden/ratchet"
+            "install-path": "../../../Chain-Reaction/vendor/cboden/ratchet"
         },
         {
             "name": "evenement/evenement",
@@ -113,7 +113,7 @@
                 "issues": "https://github.com/igorw/evenement/issues",
                 "source": "https://github.com/igorw/evenement/tree/master"
             },
-            "install-path": "../evenement/evenement"
+            "install-path": "../../../Chain-Reaction/vendor/evenement/evenement"
         },
         {
             "name": "guzzlehttp/psr7",
@@ -191,7 +191,7 @@
                 "issues": "https://github.com/guzzle/psr7/issues",
                 "source": "https://github.com/guzzle/psr7/tree/1.7.0"
             },
-            "install-path": "../guzzlehttp/psr7"
+            "install-path": "../../../Chain-Reaction/vendor/guzzlehttp/psr7"
         },
         {
             "name": "psr/http-message",
@@ -247,7 +247,7 @@
             "support": {
                 "source": "https://github.com/php-fig/http-message/tree/master"
             },
-            "install-path": "../psr/http-message"
+            "install-path": "../../../Chain-Reaction/vendor/psr/http-message"
         },
         {
             "name": "ralouphie/getallheaders",
@@ -294,7 +294,7 @@
                 "issues": "https://github.com/ralouphie/getallheaders/issues",
                 "source": "https://github.com/ralouphie/getallheaders/tree/develop"
             },
-            "install-path": "../ralouphie/getallheaders"
+            "install-path": "../../../Chain-Reaction/vendor/ralouphie/getallheaders"
         },
         {
             "name": "ratchet/rfc6455",
@@ -354,7 +354,7 @@
                 "issues": "https://github.com/ratchetphp/RFC6455/issues",
                 "source": "https://github.com/ratchetphp/RFC6455/tree/v0.3"
             },
-            "install-path": "../ratchet/rfc6455"
+            "install-path": "../../../Chain-Reaction/vendor/ratchet/rfc6455"
         },
         {
             "name": "react/cache",
@@ -433,7 +433,7 @@
                     "type": "github"
                 }
             ],
-            "install-path": "../react/cache"
+            "install-path": "../../../Chain-Reaction/vendor/react/cache"
         },
         {
             "name": "react/dns",
@@ -516,7 +516,7 @@
                     "type": "github"
                 }
             ],
-            "install-path": "../react/dns"
+            "install-path": "../../../Chain-Reaction/vendor/react/dns"
         },
         {
             "name": "react/event-loop",
@@ -565,7 +565,7 @@
                 "issues": "https://github.com/reactphp/event-loop/issues",
                 "source": "https://github.com/reactphp/event-loop/tree/v1.1.1"
             },
-            "install-path": "../react/event-loop"
+            "install-path": "../../../Chain-Reaction/vendor/react/event-loop"
         },
         {
             "name": "react/promise",
@@ -618,7 +618,7 @@
                 "issues": "https://github.com/reactphp/promise/issues",
                 "source": "https://github.com/reactphp/promise/tree/v2.8.0"
             },
-            "install-path": "../react/promise"
+            "install-path": "../../../Chain-Reaction/vendor/react/promise"
         },
         {
             "name": "react/promise-timer",
@@ -678,7 +678,7 @@
                 "issues": "https://github.com/reactphp/promise-timer/issues",
                 "source": "https://github.com/reactphp/promise-timer/tree/v1.6.0"
             },
-            "install-path": "../react/promise-timer"
+            "install-path": "../../../Chain-Reaction/vendor/react/promise-timer"
         },
         {
             "name": "react/socket",
@@ -765,7 +765,7 @@
                     "type": "github"
                 }
             ],
-            "install-path": "../react/socket"
+            "install-path": "../../../Chain-Reaction/vendor/react/socket"
         },
         {
             "name": "react/stream",
@@ -818,7 +818,7 @@
                 "issues": "https://github.com/reactphp/stream/issues",
                 "source": "https://github.com/reactphp/stream/tree/v1.1.1"
             },
-            "install-path": "../react/stream"
+            "install-path": "../../../Chain-Reaction/vendor/react/stream"
         },
         {
             "name": "symfony/deprecation-contracts",
@@ -888,7 +888,7 @@
                     "type": "tidelift"
                 }
             ],
-            "install-path": "../symfony/deprecation-contracts"
+            "install-path": "../../../Chain-Reaction/vendor/symfony/deprecation-contracts"
         },
         {
             "name": "symfony/http-foundation",
@@ -964,7 +964,7 @@
                     "type": "tidelift"
                 }
             ],
-            "install-path": "../symfony/http-foundation"
+            "install-path": "../../../Chain-Reaction/vendor/symfony/http-foundation"
         },
         {
             "name": "symfony/polyfill-mbstring",
@@ -1047,7 +1047,7 @@
                     "type": "tidelift"
                 }
             ],
-            "install-path": "../symfony/polyfill-mbstring"
+            "install-path": "../../../Chain-Reaction/vendor/symfony/polyfill-mbstring"
         },
         {
             "name": "symfony/polyfill-php80",
@@ -1133,7 +1133,7 @@
                     "type": "tidelift"
                 }
             ],
-            "install-path": "../symfony/polyfill-php80"
+            "install-path": "../../../Chain-Reaction/vendor/symfony/polyfill-php80"
         },
         {
             "name": "symfony/routing",
@@ -1226,8 +1226,9 @@
                     "type": "tidelift"
                 }
             ],
-            "install-path": "../symfony/routing"
+            "install-path": "../../../Chain-Reaction/vendor/symfony/routing"
         }
     ],
-    "dev": true
+    "dev": true,
+    "dev-package-names": []
 }

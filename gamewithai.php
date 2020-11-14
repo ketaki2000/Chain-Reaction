@@ -8,6 +8,6 @@ Hey, welcome to the game!
 <canvas id="myCanvas" height="360px" width="360px"></canvas>
 <div id="sample"></div>
 
-   <script type="text/javascript" src="myscript.js"></script>
+   <script type="text/javascript" src="myscript1.js"></script>
 </body>
 </html>

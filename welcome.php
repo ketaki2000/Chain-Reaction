@@ -30,20 +30,14 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
     </p>
     <div>
         <button id='playgame'>Play A Game !</button>
+        <button id='playgamewithai'>Play A Game with AI!</button>
     </div>
     <script>
     document.getElementById('playgame').addEventListener("click", function(){
-    var conn = new WebSocket('ws://localhost:8080');
-    console.log(conn);
-    conn.onopen = function(e) {
-        console.log("Connection established!");
-       
-    };
-
-    conn.onmessage = function(e) {
-        console.log(e.data);
-    };
-    window.location.href = "game.php";
+        window.location.href = "game.php";
+    }
+    document.getElementById('playgamewithai').addEventListener("click", function(){
+        window.location.href = "gamewithai.php";
     }
     );
     
