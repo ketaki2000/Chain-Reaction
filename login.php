@@ -64,7 +64,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                             $_SESSION["username"] = $username;                            
                             
                             // Redirect user to welcome page
-                            header("location: welcome.php");
+                            header("location: profile.php");
                         } else{
                             // Display an error message if password is not valid
                             $password_err = "The password you entered was not valid.";
@@ -94,12 +94,14 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     <meta charset="UTF-8">
     <title>Login</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.css">
-    <script src='https://kit.fontawesome.com/a076d05399.js'></script>
-    <link rel="stylesheet" type="text/css" href="style.css">
-    
+    <style type="text/css">
+        body{ font: 14px sans-serif; }
+        .wrapper{ width: 350px; padding: 20px; }
+    </style>
 </head>
 <body>
-        <!--h2>Login</h2>
+    <div class="wrapper">
+        <h2>Login</h2>
         <p>Please fill in your credentials to login.</p>
         <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
             <div class="form-group <?php echo (!empty($username_err)) ? 'has-error' : ''; ?>">
@@ -117,65 +119,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                 <input type="submit" class="btn btn-primary" value="Login">
             </div>
             <p>Don't have an account? <a href="register.php">Sign up now</a>.</p>
-        </form-->
-        <form autocomplete='off' class='form' action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
-  <div class='control'>
-    <h1>
-      Login
-    </h1>
-            <p>Please fill in your credentials to login.</p>
-  </div>
-  <div class='control block-cube block-input' class="form-group <?php echo (!empty($username_err)) ? 'has-error' : ''; ?>">
-    <input name='username' placeholder='Username' type='text' value="<?php echo $username; ?>">
-    <div class='bg-top'>
-      <div class='bg-inner'></div>
-    </div>
-    <div class='bg-right'>
-      <div class='bg-inner'></div>
-    </div>
-    <div class='bg'>
-      <div class='bg-inner'></div>
-    </div>
-     <span class="help-block"><?php echo $username_err; ?></span>
-  </div>
-  <div class='control block-cube block-input' class="form-group <?php echo (!empty($password_err)) ? 'has-error' : ''; ?>">
-    <input name='password' placeholder='Password' type='password' value="<?php echo $password; ?>">
-    <div class='bg-top'>
-      <div class='bg-inner'></div>
-    </div>
-    <div class='bg-right'>
-      <div class='bg-inner'></div>
-    </div>
-    <div class='bg'>
-      <div class='bg-inner'></div>
-    </div>
-    <span class="help-block" style="color:white;text-align:center;"><?php echo $password_err; ?></span>
-  </div>
-
-              <p><input type="checkbox" name="remember" style="color: white" /> Remember me
-                
-  <div>
-    <br>
-      <button class='btn block-cube block-cube-hover' type='submit' value="Login">
-    <div class='bg-top'>
-      <div class='bg-inner'></div>
-    </div>
-    <div class='bg-right'>
-      <div class='bg-inner'></div>
-    </div>
-    <div class='bg'>
-      <div class='bg-inner'></div>
-    </div>
-    <div class='text'>
-      Log In
-    </div>
-  </button> 
-  </div>
-  <br>
-            <p>Don't have an account? <a href="register.php">Sign up now</a>.</p>
-            <br>
-
-  </form>
-       
+        </form>
+    </div>    
 </body>
 </html>
