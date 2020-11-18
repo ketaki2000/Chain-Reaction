@@ -1,10 +1,11 @@
-
 $(document).ready(function(){
 
     var conn = new WebSocket('ws://localhost:8080');
     conn.onopen = function(e) {
         console.log("Connection established!");
-        
+        var username = <?php echo htmlspecialchars($_SESSION["username"]); ?>;
+        data = {'username':}
+        conn.send(data)
     };
 
     conn.onmessage = function(e)
@@ -63,7 +64,7 @@ $(document).ready(function(){
     t1Grad.addColorStop(0, 'rgba(255, 255, 255, 1)');
     t1Grad.addColorStop(0.2, 'rgba(255, 195, 85, 1)');
     t1Grad.addColorStop(0.95, 'rgba(128, 56, 0, 1)');
-    t1Grad.addColorStop(1, 'rgba(128, 56, 0, 0)');
+    t1Grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
     t1Ctx.fillStyle = t1Grad;
     t1Ctx.fillRect(0, 0, t1Canvas.width, t1Canvas.height);
     canvasarray.push(t1Canvas);

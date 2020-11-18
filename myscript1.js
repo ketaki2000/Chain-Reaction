@@ -1,4 +1,5 @@
 
+
 $(document).ready(function(){
 
     var canvas = $("#myCanvas")[0];
@@ -402,7 +403,7 @@ $(document).ready(function(){
     }
     function Draw()
     {
-            console.log("Draw is called");
+        console.log("Draw is called");
         ctx.clearRect(0,0,canvas.width,canvas.height);
         MaxDiameter = DrawGrid(Rows,Columns,0,0);
         DrawGrid(Rows,Columns,4,4);
@@ -544,60 +545,98 @@ $(document).ready(function(){
       //console.log("x: "+relativeX+" ,y: "+relativeY);
       BoxDetect(relativeX,relativeY,Rows,Columns);
       
+      setTimeout(function(){
+        var t = aimove(balls);//r,c 
+        updateStatus(t[0],t[1],currentPlayer);
+        setTimeout(function()
+        {
+            currentPlayer = (currentPlayer+1)%2;
+        },1000);
+      },1000);
     });
     
-    function mouseClickHandler(e)
+    
+    
+    
+    function aimove(position)
     {
-        console.log(e.clientX+" "+e.clientY);
-        console.log(canvas.offsetLeft+" "+canvas.offsetTop);
-        var relativeX = e.clientX-canvas.offsetLeft;
-        var relativeY = e.clientY-canvas.offsetTop;
-        //console.log("xcord: "+relativeX+" ycord: "+relativeY);
-        BoxDetect(relativeX,relativeY,Rows,Columns);
-        //Draw();
-        //console.log("xcord balls: "+grid[1][0].x+" ycord: "+grid[1][0].y);
-        //xdis = HorizontalDistanceBetween2Lines;
-        //ydis = VerticalDistanceBetween2Lines;
-        //console.log("xdis: "+ xdis+ "ydis: "+ ydis);
-    
-        //var mm = grid[1][0].x+xdis;
-        //var pp = grid[1][0].y+ydis;
-        //console.log("xcord balls end: "+mm+" ycord end: "+pp);
-        //console.log("xcord balls: "+grid[0][1].x+" ycord: "+grid[0][1].y);
+        console.log("aimove is called!");
+        console.log(JSON.stringify({'position':position}));
+        var original = JSON.parse(JSON.stringify(position));
+        var k=-Infinity;
+        var I,J,i,j;
+        for(i=0;i<8;i++)
+        {
+            for(j=0;j<8;j++)
+            {
+                if(original[i][j].Status==0 || original[i][j].player_id==1)
+                {
+                    
+                    var temp = JSON.parse(JSON.stringify(position));
+                    var t = minimax(aibfs(temp,i,j,1),2,-Infinity,Infinity,0);
+                    if(t>k)
+                    {
+                        I=i;
+                        J=j;
+                        k=t;
+                    }
+                }
+            }
+        }
+        console.log(I,J);
+        return [I,J];
     }
-    
-    });
     function getCriticalMass(i,j)
     {
+        console.log("getcriticalmass is called");
+        
         if((i==0 && j==0 )|| (i==0 && j==Columns-1) || (i==Rows-1 && j==0) || (i=Rows-1 && j==Columns-1))
         {
             return 2;
         }
-        if(((i==0||i==Rows-1)&&(j>0&&j<Columns-1))||((j==0||j==Columns-1)&&(i>0&&i<Rows-1)))
+        if(((i==0||i==7)&&(j>0&&j<7))||((j==0||j==7)&&(i>0&&i<7)))
         {
             return 3;
         }
         return 4;
     }
+    function checkEnemyCriticalCells(position,I,J,player)
+    {
+        console.log("checkEnemyCriticalCells is called");
+        console.log(JSON.stringify({'position':position}));
+        x = [0,0,1,-1]
+        y = [-1,1,0,0]
+        for(k=0;k<4;k++)
+        {
+            if(func(I+x[k],J+y[k]) &&  position[I+x[k]][J+y[k]].player_id==((player+1)%2) && position[I+x[k]][J+y[k]].Status == getCriticalMass(I+x[k],J+y[k]))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
     function evaluation(position,player)
     {
-        if(gameover(position) && player==0)
+        console.log("evaluation is called");
+        console.log(JSON.stringify({'position':position}));
+        /*if(gameover(position) && player==0)
         {
             return -10000;
         }
         if(gameover(position) && player==1)
         {
             return +10000;
-        }
+        }*/
         value = 0;
-        for (i=0;i<Rows;i++)
+        for (i=0;i<8;i++)
         {
-            for(j=0;j<Columns;j++)
+            for(j=0;j<8;j++)
             {
                 if(position.player_id==player)
                 {
                     value+=1;
-                    if(checkEnemyCriticalCells(position,i,j))
+                    /*
+                    if(checkEnemyCriticalCells(position,i,j,player))
                     {
                         value-=(5-getCriticalMass(i,j));
                     }
@@ -620,93 +659,104 @@ $(document).ready(function(){
                        {
                             value+=2;
                         } 
+                        */
                 }
             }
         }
+        if(player==1)
+        {
+            return value;
+        }
+        return -value;
     }
     
-    function aibfs(position,i,j)
+    function aibfs(position,I,J,player)
     {
-        position[i][j].Status++;  
+        console.log("aibfs is called");
+        console.log("I:"+I+",J:"+J);
+        console.log(JSON.stringify({'position':position}));
+        var original = JSON.parse(JSON.stringify(position));
+        original[I][J].Status++;  
+        original[I][J].player_id=player;
+        console.log(JSON.stringify({'position':original}));
+        console.log(JSON.stringify({'position':position}));
+        queue = []
+        queue.push([I,J]);
         x = [0,0,1,-1]
         y = [-1,1,0,0]
-        if((i==0 && j==0 )|| (i==0 && j==Columns-1) || (i==Rows-1 && j==0) || (i=Rows-1 && j==Columns-1))
+        while(queue.length>0)
         {
-            if(position[i][j].Status>=2)
+            firstElement = queue[0];
+            var i = firstElement[0];
+            var j = firstElement[1];
+            queue.shift();
+            if((i==0 && j==0 )|| (i==0 && j==7) || (i==7 && j==0) || (i==7 && j==7))
             {
-                for(k=0;k<4;k++)
+                if(original[i][j].Status>=2)
                 {
-                    if(func(i+x[k],j+y[k]))
+                    for(k=0;k<4;k++)
                     {
-                        position[i+x[k]][j+y[k]]++;
-                        position[i+x[k]][j+y[k]].player_id=position[i][j].player_id;
+                        if(func(i+x[k],j+y[k]))
+                        {
+                            original[i][j].Status=0;
+                            original[i+x[k]][j+y[k]].Status++;
+                            original[i+x[k]][j+y[k]].player_id=original[i][j].player_id;
+                            queue.push([i+x[k],j+y[k]]);
+                        }
                     }
                 }
-                for(k=0;k<4;k++)
+                
+            }
+            else if(((i==0||i==7)&&(j>0&&j<7))||((j==0||j==7)&&(i>0&&i<7)))
+            {
+                if(original[i][j].Status>=3)
                 {
-                    if(func(i+x[k],j+y[k]))
+                    for(k=0;k<4;k++)
                     {
-                        aibfs(position,i+x[k],j+y[k]);
+                        if(func(i+x[k],j+y[k]))
+                        {
+                            original[i][j].Status=0;
+                            original[i+x[k]][j+y[k]].Status++;
+                            original[i+x[k]][j+y[k]].player_id=original[i][j].player_id;
+                            queue.push([i+x[k],j+y[k]]);
+                        }
                     }
+                    
                 }
             }
-            
-        }
-        else if(((i==0||i==Rows-1)&&(j>0&&j<Columns-1))||((j==0||j==Columns-1)&&(i>0&&i<Rows-1)))
-        {
-            if(position[i][j].Status>=3)
+            else if(original[i][j].Status>=4)
             {
                 for(k=0;k<4;k++)
                 {
                     if(func(i+x[k],j+y[k]))
                     {
-                        position[i+x[k]][j+y[k]]++;
-                        position[i+x[k]][j+y[k]].player_id=position[i][j].player_id;
+                        original[i][j].Status=0;
+                        original[i+x[k]][j+y[k]].Status++;
+                        original[i+x[k]][j+y[k]].player_id=original[i][j].player_id;
+                        queue.push([i+x[k],j+y[k]]);
                     }
-                }
-                for(k=0;k<4;k++)
-                {
-                    if(func(i+x[k],j+y[k]))
-                    {
-                        aibfs(position,i+x[k],j+y[k]);
-                    }
-                }
-            }
-        }
-        else if(position[i][j].Status>=4)
-        {
-            for(k=0;k<4;k++)
-            {
-                if(func(i+x[k],j+y[k]))
-                {
-                    position[i+x[k]][j+y[k]]++;
-                    position[i+x[k]][j+y[k]].player_id=position[i][j].player_id;
-                }
-            }
-            for(k=0;k<4;k++)
-            {
-                if(func(i+x[k],j+y[k]))
-                {
-                    aibfs(position,i+x[k],j+y[k]);
                 }
             }
         }
-        
+        return original;
         
     }
     function moveGen(position,player)
     {
-        var original = position;
+        console.log("movegen is called");
+        console.log(JSON.stringify({'position':position}));
+        var original = JSON.parse(JSON.stringify(position));
         var movegen = [];
-        for(i=0;i<Rows;i++)
+        for(i=0;i<8;i++)
         {
-            for(j=0;j<Columns;j++)
+            for(j=0;j<8;j++)
             {
-                if(position.player_id==player)
+                if(original[i][j].Status==0 || original[i][j].player_id==player)
                 {
-                    var temp = original;
-                    
-                    movegen.push(aibfs(temp,i,j));
+                    console.log("movegen loop called");
+                    var temp = JSON.parse(JSON.stringify(position)); 
+                    console.log(JSON.stringify({'temp':temp}));
+                    movegen.push(aibfs(temp,i,j,player));
                 }
             }
         }
@@ -714,11 +764,13 @@ $(document).ready(function(){
     }
     function gameover(position)
     {
+        console.log("gameover is called");
+        console.log(JSON.stringify({'position':position}));
         var p1=-1;
         var p2=-1;
-        for(r = 0;r<Rows; ++r)
+        for(r = 0;r<8; ++r)
         {
-            for(c = 0;c<Columns;++c)
+            for(c = 0;c<8;++c)
             {
                 if(position[c][r].Status>0)
                 {
@@ -729,44 +781,38 @@ $(document).ready(function(){
                     else if(position[c][r].player_id != p1)
                     {
                         p2=position[c][r].player_id;
-                        break;
+                        return false;
     
                     }
                 }
     
             }
-            if(p2!=-1)
-            {
-                break;
-            }
-        }
-        if(p2==-1)
-        {
-            p1++;
             
-            //document.location.reload();
-            return p1;
-    
         }
-        return 0;
+        
+        return true;
     }
     function minimax(position,depth,alpha,beta,maximizingPlayer)
     {
+        console.log("minimax is called");
+        console.log(JSON.stringify({'position':position}));
         if(depth==0 || gameover(position))
         {
-                return evaluation(position);
+            
+            return evaluation(position,maximizingPlayer);
+            
         }
 
         if (maximizingPlayer)
         {
             var maxEval = -Infinity;
-            var children  = moveGen(position);
+            var children  = moveGen(position,1);
             for(child=0;child<children.length;child++)
             {
-                eval = minimax(children[child],depth-1,alpha,beta,false);
-                maxEval = max(maxEval,eval);
+                eval = minimax(children[child],depth-1,alpha,beta,0);
+                maxEval = Math.max(maxEval,eval);
 
-                alpha = max(alpha,eval);
+                alpha = Math.max(alpha,eval);
                 if(beta<=alpha)
                 {
                     break;
@@ -777,13 +823,13 @@ $(document).ready(function(){
         else
         {
             var minEval = +Infinity;
-            var children  = moveGen(position);
+            var children  = moveGen(position,0);
             for(child=0;child<children.length;child++)
             {
-                eval = minimax(children[child],depth-1,alpha,beta,false);
-                minEval = min(minEval,eval);
+                eval = minimax(children[child],depth-1,alpha,beta,1);
+                minEval = Math.min(minEval,eval);
 
-                beta = min(beta,eval);
+                beta = Math.min(beta,eval);
                 if(beta<=alpha)
                 {
                     break;
@@ -792,3 +838,4 @@ $(document).ready(function(){
             }
         }
     }
+    });
