@@ -70,9 +70,10 @@ border-right: 4px;
 }
 			
 			table {
-				margin: auto;
+				width:  100%;
   border-collapse: separate;
   border-spacing: 120px 0;
+
 }
 img {
     width:  150px;
@@ -142,9 +143,24 @@ td {
 										<div class="row">
 												<div class="col-md-12">
 													<div style="text-align: center;">
-														<h1>
-															<b><?php echo htmlspecialchars($_SESSION["username"]); ?></b>
-														</h1>
+														<?php
+$conn = mysqli_connect("localhost", "root", "", "chain-reaction");
+// Check connection
+if ($conn->connect_error) {
+die("Connection failed: " . $conn->connect_error);
+}
+														 $sql4 = "SELECT image,username from users where id='$id'  ";
+															$result4 = $conn->query($sql4);
+															if ($result4->num_rows > 0){
+																$row = $result4->fetch_assoc();
+																echo "
+															  <img src=".$row["image"]." float:none  style='width:150px'/>
+															  <div class=container >
+															    <h3><b>".$row["username"]."</b></h3> 
+															  </div>
+															";
+
+															}?>
 													</div>
 
 												</div> <!-- /.col-md-12 -->
@@ -174,7 +190,7 @@ $conn = mysqli_connect("localhost", "root", "", "chain-reaction");
 if ($conn->connect_error) {
 die("Connection failed: " . $conn->connect_error);
 }
-$sql1 = "SELECT receiver_id from follow where sender_id=6  ";
+$sql1 = "SELECT receiver_id from follow where sender_id='$id'  ";
 $result1 = $conn->query($sql1);
 if ($result1->num_rows > 0) {
 // output data of each row
@@ -238,7 +254,7 @@ if ($result3->num_rows > 0){
 	else{$x='+ Follow';}
 echo "<tr><td>" . $row["rank"]. "</td><td>" . $row["id"] . "</td><td>" . $row["username"] . "</td>
 <td>". $row["score"]. "</td>
-<td> <a href='follow.php?receiver_id=$row[id]'><input type='submit' id=myDIV onclick=myFunction() value='$x' class='btn'></td>
+<td> <a href='follow.php?receiver_id=$row[id]&username=$row[username]'><input type='submit' id=myDIV onclick=myFunction() value='$x' class='btn'></td>
 
 </tr>";
 }
